@@ -102,8 +102,8 @@ def main():
 
     st.title("❤️ Heart Disease Prediction Web App")
     st.write(
-        "This app predicts heart disease risk using machine learning.\n"
-        "Not medical advice."
+        "This app predicts heart disease risk using a machine learning model and an AI chatbot.\n"
+        "This is for educational purposes only, not medical advice."
     )
 
     try:
@@ -128,8 +128,8 @@ def main():
         restecg = st.selectbox("Resting ECG", [0, 1, 2])
         thalach = st.number_input("Max Heart Rate", 60, 250, 150)
         exang = st.selectbox("Exercise-induced Angina", [0, 1])
-        oldpeak = st.number_input("Oldpeak", 0.0, 10.0, 1.0, step=0.1)
-        slope = st.selectbox("Slope", [0, 1, 2])
+        oldpeak = st.number_input("Oldpeak (ST depression)", 0.0, 10.0, 1.0, step=0.1)
+        slope = st.selectbox("Slope of ST segment", [0, 1, 2])
         ca = st.number_input("Vessels Colored (ca)", 0, 3, 0)
         thal = st.selectbox("Thalassemia (thal)", [0, 1, 2, 3])
 
@@ -153,13 +153,32 @@ def main():
             st.session_state.show_chatbot = True
 
             if prediction == 1:
-                st.error(f"High risk ({probability:.2%})")
+                st.error(f"High risk of heart disease ({probability:.2%})")
             else:
-                st.success(f"Low risk ({probability:.2%})")
+                st.success(f"Low risk of heart disease ({probability:.2%})")
 
     with col2:
         st.header("Model Info")
-        st.metric("Accuracy", f"{accuracy:.2%}")
+        st.metric("Random Forest Accuracy", f"{accuracy:.2%}")
+
+
+        st.subheader("Input Features")
+        st.markdown(
+            "- `age`: Age in years\n"
+            "- `sex`: 0 = female, 1 = male\n"
+            "- `cp`: Chest pain type (0–3)\n"
+            "- `trestbps`: Resting blood pressure (mm Hg)\n"
+            "- `chol`: Serum cholesterol (mg/dl)\n"
+            "- `fbs`: Fasting blood sugar > 120 mg/dl (1 = yes, 0 = no)\n"
+            "- `restecg`: Resting ECG results (0–2)\n"
+            "- `thalach`: Maximum heart rate achieved\n"
+            "- `exang`: Exercise-induced angina (1 = yes, 0 = no)\n"
+            "- `oldpeak`: ST depression induced by exercise\n"
+            "- `slope`: Slope of peak exercise ST segment (0–2)\n"
+            "- `ca`: Number of major vessels (0–3)\n"
+            "- `thal`: Thalassemia (0–3, encoded)\n"
+        )
+
         with st.expander("Dataset Preview"):
             st.write(df.head())
 
@@ -174,7 +193,7 @@ def main():
                 st.markdown(f"**Bot:** {msg['text']}")
 
         with st.form("chat_form", clear_on_submit=True):
-            user_chat_input = st.text_input("Ask something:", key="chat_input_form")
+            user_chat_input = st.text_input("Ask something about your result or heart health:", key="chat_input_form")
             submitted = st.form_submit_button("Send")
 
         if submitted and user_chat_input.strip():
